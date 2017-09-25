@@ -1,12 +1,11 @@
 Snake game
 =============
 
-### Pre-requisites
+Open up `public/index.html` in Chrome browser and the game should work. However, if it doesn't work, the below is the steps to build.
 
-Node.js (LTS)
-
-
-### How to build
+# How to build (if you need to build)
+###Pre-requisites
+* Node.js (LTS)
 
 1. `npm install`
 2. `npm run build`
