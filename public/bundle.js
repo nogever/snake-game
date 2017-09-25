@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,27 +68,25 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_init__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_snake__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_main_scss__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_main_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__css_main_scss__);
+const BOARD_WIDTH = 40;
+/* harmony export (immutable) */ __webpack_exports__["b"] = BOARD_WIDTH;
 
 
+const BOARD_HEIGHT = 40;
+/* harmony export (immutable) */ __webpack_exports__["a"] = BOARD_HEIGHT;
 
 
-const init = (element) => {
-  const container = document.querySelector(element);
-  const snake = new __WEBPACK_IMPORTED_MODULE_1__js_snake__["a" /* default */]();
+const SNAKE_INIT_LENGTH = 6;
+/* harmony export (immutable) */ __webpack_exports__["e"] = SNAKE_INIT_LENGTH;
 
-  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["b" /* initBoardCells */])(container);
-  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["d" /* placeSnake */])(snake);
-  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["a" /* generateFrog */])(snake);
-};
 
-document.addEventListener('DOMContentLoaded', () => {
-  init('.board');
-});
+const FPS = 12;
+/* harmony export (immutable) */ __webpack_exports__["c"] = FPS;
+
+
+const SCORE_MULTIPLIER = 2;
+/* harmony export (immutable) */ __webpack_exports__["d"] = SCORE_MULTIPLIER;
+
 
 
 /***/ }),
@@ -96,19 +94,169 @@ document.addEventListener('DOMContentLoaded', () => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = collisionCheck;
+/* harmony export (immutable) */ __webpack_exports__["b"] = keyHandler;
+/* harmony export (immutable) */ __webpack_exports__["c"] = updateScore;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(0);
+
+
+function collisionCheck(head) {
+  const x = head.split('-')[0];
+  const y = head.split('-')[1];
+
+  if (x < 1 || y < 1 || x > __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* BOARD_WIDTH */] || y > __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* BOARD_HEIGHT */]) {
+    return 'wall';
+  }
+
+  const cell = document.querySelector(`.cell-${x}-${y}`);
+
+  if (cell.classList.contains('snake')) {
+    return 'snake';
+  } else if(cell.classList.contains('frog')){
+    return 'frog';
+  }
+  return 'going';
+};
+
+function keyHandler(snake, key) {
+  if (snake.isDead) {
+    return false;
+  }
+
+  switch(key) {
+    case 37:
+      snake.direction = 'left';      
+      break;
+    case 38:
+      snake.direction = 'up';      
+      break;
+    case 39:
+      snake.direction = 'right';      
+      break;
+    case 40:
+      snake.direction = 'down';      
+      break;
+  };
+};
+
+function updateScore(snake) {
+  const score = document.querySelector('.footer span');
+  // trying to use css :empty selector for transition
+  score.innerHTML = '';
+  setTimeout(() => {
+    score.textContent = (snake.body.length * __WEBPACK_IMPORTED_MODULE_0__constants__["d" /* SCORE_MULTIPLIER */]) - (__WEBPACK_IMPORTED_MODULE_0__constants__["e" /* SNAKE_INIT_LENGTH */] * __WEBPACK_IMPORTED_MODULE_0__constants__["d" /* SCORE_MULTIPLIER */])
+  }, 200);
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = Snake;
+/* harmony export (immutable) */ __webpack_exports__["c"] = turnHead;
+/* harmony export (immutable) */ __webpack_exports__["b"] = handleStatus;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__init__ = __webpack_require__(3);
+
+
+
+
+function Snake() {
+  this.body = Object(__WEBPACK_IMPORTED_MODULE_2__init__["c" /* initSnakeBody */])();
+  this.isDead = false;
+  this.direction = 'up';
+};
+
+function turnHead(direction, x, y) {
+  let head = direction;
+
+  switch(direction) {
+    case 'left':
+      head = `${x}-${y - 1}`;
+      break;
+    case 'right':
+      head = `${x}-${y + 1}`;
+      break;
+    case 'up':
+      head = `${x - 1}-${y}`;
+      break;
+    case 'down':
+      head = `${x + 1}-${y}`;
+      break;
+  };
+
+  return head;
+};
+
+function handleStatus(status, snake, head) {
+  if (status === 'wall' || status === 'snake') {
+    snake.isDead = true;
+    handleDead();
+    return;
+  }
+
+  addNewHead(head, snake);
+
+  if (status === 'frog') {
+    Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* updateScore */])(snake);
+    Object(__WEBPACK_IMPORTED_MODULE_2__init__["a" /* generateFrog */])(snake);
+  } else {
+    removeTail(snake);
+  }
+};
+
+const addNewHead = (head, snake) => {
+  snake.body.unshift(head);
+  const newBodyCell = document.querySelector(`.cell-${head}`);
+  newBodyCell.classList.add('snake');
+  newBodyCell.classList.remove('frog');
+};
+
+const removeTail = snake => {
+  const tail = snake.body.pop();
+  const tailCell = document.querySelector(`.cell-${tail}`);
+  tailCell.classList.remove('snake');
+};
+
+const handleDead = () => {
+  const gameOverBackdrop = document.querySelector('.backdrop');
+  gameOverBackdrop.classList.add('game-over');
+  const restartButton = document.querySelector('.game-over button');
+  restartButton.addEventListener('click', e => {
+    gameOverBackdrop.classList.remove('game-over');
+    resetGame();
+  });
+};
+
+const resetGame = () => {
+  // TODO: implement game module to handle the state of the game
+  window.location.reload(false);
+};
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (immutable) */ __webpack_exports__["b"] = initBoardCells;
 /* harmony export (immutable) */ __webpack_exports__["c"] = initSnakeBody;
 /* harmony export (immutable) */ __webpack_exports__["d"] = placeSnake;
 /* harmony export (immutable) */ __webpack_exports__["a"] = generateFrog;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(0);
 
 
 const boardWidth = __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* BOARD_WIDTH */];
 const boardHeight = __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* BOARD_HEIGHT */];
-const snakeLength = __WEBPACK_IMPORTED_MODULE_0__constants__["c" /* SNAKE_INIT_LENGTH */];
+const snakeLength = __WEBPACK_IMPORTED_MODULE_0__constants__["e" /* SNAKE_INIT_LENGTH */];
 const totalCells = __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* BOARD_WIDTH */] * __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* BOARD_HEIGHT */];
 
 function initBoardCells(container) {
+  container.innerHTML = '';
+
   for (var i = 0; i < boardWidth; i++) {
     for(var j = 0; j < boardHeight; j++) {
       const cell = document.createElement('div');
@@ -155,31 +303,103 @@ function generateFrog(snake) {
 
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const BOARD_WIDTH = 40;
-/* harmony export (immutable) */ __webpack_exports__["b"] = BOARD_WIDTH;
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["init"] = init;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_snake__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_init__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__js_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__js_animation__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__css_main_scss__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__css_main_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__css_main_scss__);
 
 
-const BOARD_HEIGHT = 40;
-/* harmony export (immutable) */ __webpack_exports__["a"] = BOARD_HEIGHT;
 
 
-const SNAKE_INIT_LENGTH = 6;
-/* harmony export (immutable) */ __webpack_exports__["c"] = SNAKE_INIT_LENGTH;
 
+
+function init(element) {
+  const container = document.querySelector(element);
+  const snake = new __WEBPACK_IMPORTED_MODULE_0__js_snake__["a" /* default */]();
+
+  Object(__WEBPACK_IMPORTED_MODULE_1__js_init__["b" /* initBoardCells */])(container);
+  Object(__WEBPACK_IMPORTED_MODULE_1__js_init__["d" /* placeSnake */])(snake);
+  Object(__WEBPACK_IMPORTED_MODULE_1__js_init__["a" /* generateFrog */])(snake);
+
+  document.addEventListener('keydown', key => {
+    if (key.which === 32) {
+      Object(__WEBPACK_IMPORTED_MODULE_3__js_animation__["a" /* animate */])(snake);
+    }
+    Object(__WEBPACK_IMPORTED_MODULE_2__js_utils__["b" /* keyHandler */])(snake, key.which);
+  });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  init('.board');
+});
 
 
 /***/ }),
-/* 3 */
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = animate;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__snake__ = __webpack_require__(2);
+
+
+
+
+const forward = snake => {
+  const head = snake.body[0];
+  const x = Number(head.split('-')[0]);
+  const y = Number(head.split('-')[1]);
+  const newHead = Object(__WEBPACK_IMPORTED_MODULE_2__snake__["c" /* turnHead */])(snake.direction, x, y);
+  const status = Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* collisionCheck */])(newHead);
+
+  Object(__WEBPACK_IMPORTED_MODULE_2__snake__["b" /* handleStatus */])(status, snake, newHead);
+};
+
+function animate(snake) {
+  const interval = 1000 / __WEBPACK_IMPORTED_MODULE_0__constants__["c" /* FPS */];
+  let start = null;
+
+  const move = timestamp => {
+    if (snake.isDead) {
+      return;
+    }
+
+    if (!start) {
+      start = timestamp;
+    }
+
+    window.requestAnimationFrame(move);
+
+    const progress = timestamp - start;
+
+    if (progress > interval) {
+      start = timestamp - (progress % interval);
+      forward(snake);
+    }
+  };
+
+  window.requestAnimationFrame(move);
+};
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(4);
+var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -187,7 +407,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(6)(content, options);
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -204,21 +424,21 @@ if(false) {
 }
 
 /***/ }),
-/* 4 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(8)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box; }\n\nhtml,\nbody {\n  width: 100%;\n  height: 100%; }\n\nbody {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-family: 'Arial', 'san-serif';\n  color: #444;\n  font-size: 14px;\n  background: #f6f9fd; }\n\n.board {\n  width: 402px;\n  height: 402px;\n  border: 1px solid #ddd;\n  display: flex;\n  flex-wrap: wrap;\n  background: white; }\n  .board .cell {\n    flex: 0 0 calc(400px / 40);\n    height: calc(400px / 40); }\n  .board .snake {\n    background: #f08f00; }\n  .board .frog {\n    background: #21a88e; }\n", ""]);
+exports.push([module.i, "* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box; }\n\nhtml,\nbody {\n  width: 100%;\n  height: 100%; }\n\nbody {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n  font-family: 'Arial', 'san-serif';\n  color: #444;\n  font-size: 14px;\n  background: #f6f9fd; }\n\n.header,\n.footer {\n  padding: 40px;\n  text-align: center; }\n\n.header {\n  line-height: 2; }\n\n.footer {\n  width: 402px;\n  display: flex;\n  justify-content: center;\n  position: relative; }\n  .footer::before {\n    content: '';\n    display: block;\n    position: absolute;\n    left: 0;\n    top: 50%;\n    width: 100%;\n    height: 1px;\n    background: #eee;\n    z-index: -1; }\n  .footer p {\n    background: #f6f9fd;\n    width: 30%; }\n  .footer span {\n    color: #333;\n    display: inline-block;\n    width: 28px;\n    text-align: right;\n    opacity: 1;\n    transition: all 0.6s ease-out; }\n    .footer span:empty {\n      opacity: 0; }\n\n.backdrop {\n  display: none;\n  color: white;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column;\n  transition: background .5s ease-out; }\n  .backdrop button {\n    background: #21a88e;\n    border: none;\n    color: white;\n    border-radius: 4px;\n    padding: 8px 24px;\n    margin: 20px; }\n    .backdrop button:hover {\n      background: #19bc9c;\n      cursor: pointer; }\n  .backdrop.game-over {\n    display: flex;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background: rgba(0, 0, 0, 0.8); }\n\n.board {\n  width: 402px;\n  height: 402px;\n  border: 1px solid #ddd;\n  display: flex;\n  flex-wrap: wrap;\n  background: white; }\n  .board .cell {\n    flex: 0 0 calc(400px / 40);\n    height: calc(400px / 40); }\n  .board .snake {\n    background: #f08f00; }\n  .board .frog {\n    background: #21a88e; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /*
@@ -300,7 +520,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -346,7 +566,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(7);
+var	fixUrls = __webpack_require__(10);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -659,7 +879,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, exports) {
 
 
@@ -750,22 +970,6 @@ module.exports = function (css) {
 
 	// send back the fixed css
 	return fixedCss;
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = Snake;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__init__ = __webpack_require__(1);
-
-
-
-function Snake() {
-  this.body = Object(__WEBPACK_IMPORTED_MODULE_1__init__["c" /* initSnakeBody */])();
 };
 
 

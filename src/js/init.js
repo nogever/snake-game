@@ -6,6 +6,8 @@ const snakeLength = config.SNAKE_INIT_LENGTH;
 const totalCells = config.BOARD_WIDTH * config.BOARD_HEIGHT;
 
 export function initBoardCells(container) {
+  container.innerHTML = '';
+
   for (var i = 0; i < boardWidth; i++) {
     for(var j = 0; j < boardHeight; j++) {
       const cell = document.createElement('div');
