@@ -1,0 +1,12 @@
+.board {
+  width: 402px;
+  height: 402px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+
+  .cell {
+    flex: 0 0 calc(400px / 40);
+    height: calc(400px / 40);
+  }
+}
