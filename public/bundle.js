@@ -69,16 +69,21 @@
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_init__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_main_scss__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_main_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__css_main_scss__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_init__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_snake__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_main_scss__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_main_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__css_main_scss__);
+
 
 
 
 const init = (element) => {
   const container = document.querySelector(element);
+  const snake = new __WEBPACK_IMPORTED_MODULE_1__js_snake__["a" /* default */]();
 
-  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["a" /* createBoard */])(container);
+  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["b" /* initBoardCells */])(container);
+  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["d" /* placeSnake */])(snake);
+  Object(__WEBPACK_IMPORTED_MODULE_0__js_init__["a" /* generateFrog */])(snake);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -87,9 +92,133 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /***/ }),
-/* 1 */,
-/* 2 */,
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = initBoardCells;
+/* harmony export (immutable) */ __webpack_exports__["c"] = initSnakeBody;
+/* harmony export (immutable) */ __webpack_exports__["d"] = placeSnake;
+/* harmony export (immutable) */ __webpack_exports__["a"] = generateFrog;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
+
+
+const boardWidth = __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* BOARD_WIDTH */];
+const boardHeight = __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* BOARD_HEIGHT */];
+const snakeLength = __WEBPACK_IMPORTED_MODULE_0__constants__["c" /* SNAKE_INIT_LENGTH */];
+const totalCells = __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* BOARD_WIDTH */] * __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* BOARD_HEIGHT */];
+
+function initBoardCells(container) {
+  for (var i = 0; i < boardWidth; i++) {
+    for(var j = 0; j < boardHeight; j++) {
+      const cell = document.createElement('div');
+
+      cell.classList.add('cell', `cell-${i + 1}-${j + 1}`);
+      
+      container.appendChild(cell);
+    }
+  }
+};
+
+function initSnakeBody() {
+  const body = [];
+  const startPoint = Math.floor(boardWidth / 2);
+
+  for (let i = 0; i < snakeLength; i++) {
+    body[i] = `${startPoint + i}-${startPoint}`;
+  }
+
+  return body;
+};
+
+function placeSnake(snake){
+  snake.body.forEach(xy => {
+    const cell = document.querySelector(`.cell-${xy}`);
+    cell.classList.add('snake');
+  })
+};
+
+function generateFrog(snake) {
+  const currentSnakeLength = snake.body.length;
+  let random = Math.floor(Math.random() * (totalCells - currentSnakeLength));
+
+  for (let i = 0; i < boardWidth; i++) {
+    for (let j = 0; j < boardHeight; j++) {
+      const cell = document.querySelector(`.cell-${i + 1}-${j + 1}`);
+
+      if (!cell.classList.contains('snake') && --random === 0) {
+        cell.classList.add('frog');
+      }
+    }
+  }
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const BOARD_WIDTH = 40;
+/* harmony export (immutable) */ __webpack_exports__["b"] = BOARD_WIDTH;
+
+
+const BOARD_HEIGHT = 40;
+/* harmony export (immutable) */ __webpack_exports__["a"] = BOARD_HEIGHT;
+
+
+const SNAKE_INIT_LENGTH = 6;
+/* harmony export (immutable) */ __webpack_exports__["c"] = SNAKE_INIT_LENGTH;
+
+
+
+/***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(4);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(6)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./main.scss", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./main.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box; }\n\nhtml,\nbody {\n  width: 100%;\n  height: 100%; }\n\nbody {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-family: 'Arial', 'san-serif';\n  color: #444;\n  font-size: 14px;\n  background: #f6f9fd; }\n\n.board {\n  width: 402px;\n  height: 402px;\n  border: 1px solid #ddd;\n  display: flex;\n  flex-wrap: wrap;\n  background: white; }\n  .board .cell {\n    flex: 0 0 calc(400px / 40);\n    height: calc(400px / 40); }\n  .board .snake {\n    background: #f08f00; }\n  .board .frog {\n    background: #21a88e; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports) {
 
 /*
@@ -171,7 +300,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -217,7 +346,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(5);
+var	fixUrls = __webpack_require__(7);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -530,7 +659,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports) {
 
 
@@ -625,84 +754,19 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(7);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(4)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./main.scss", function() {
-			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./main.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(3)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box; }\n\nhtml,\nbody {\n  width: 100%;\n  height: 100%; }\n\nbody {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-family: 'Arial', 'san-serif';\n  color: #444;\n  font-size: 14px; }\n\n.board {\n  width: 402px;\n  height: 402px;\n  border: 1px solid #ddd;\n  display: flex;\n  flex-wrap: wrap; }\n  .board .cell {\n    flex: 0 0 calc(400px / 40);\n    height: calc(400px / 40); }\n", ""]);
-
-// exports
-
-
-/***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = createBoard;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(9);
+/* harmony export (immutable) */ __webpack_exports__["a"] = Snake;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__init__ = __webpack_require__(1);
 
 
-function createBoard(container) {
-  for (var i = 0; i < __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* WIDTH */]; i++) {
-    for(var j = 0; j < __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* HEIGHT */]; j++) {
-      const cell = document.createElement('div');
 
-      cell.classList.add('cell', `cell-${i + 1}-${j + 1}`);
-      
-      container.appendChild(cell);
-    }
-  }
+function Snake() {
+  this.body = Object(__WEBPACK_IMPORTED_MODULE_1__init__["c" /* initSnakeBody */])();
 };
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const WIDTH = 40;
-/* harmony export (immutable) */ __webpack_exports__["b"] = WIDTH;
-
-
-const HEIGHT = 40;
-/* harmony export (immutable) */ __webpack_exports__["a"] = HEIGHT;
-
 
 
 /***/ })

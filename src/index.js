@@ -1,10 +1,18 @@
-import { createBoard } from './js/init';
+import {
+  initBoardCells,
+  placeSnake,
+  generateFrog,
+} from './js/init';
+import Snake from './js/snake';
 import './css/main.scss';
 
 const init = (element) => {
   const container = document.querySelector(element);
+  const snake = new Snake();
 
-  createBoard(container);
+  initBoardCells(container);
+  placeSnake(snake);
+  generateFrog(snake);
 };
 
 document.addEventListener('DOMContentLoaded', () => {

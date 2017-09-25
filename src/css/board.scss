@@ -4,9 +4,18 @@
   border: 1px solid #ddd;
   display: flex;
   flex-wrap: wrap;
+  background: white;
 
   .cell {
     flex: 0 0 calc(400px / 40);
     height: calc(400px / 40);
+  }
+
+  .snake {
+    background: #f08f00;
+  }
+
+  .frog {
+    background: #21a88e;
   }
 }
