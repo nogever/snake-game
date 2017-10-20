@@ -21,3 +21,4 @@ Todos
 3. Decorate snake with css by adding head and tail class name to the cells.
 2. Add start page to customize game, such as snake speed, number of frogs, size of the board.
 3. Fix bugs (e.g. key control).
+# snake-game
