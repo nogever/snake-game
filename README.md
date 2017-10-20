@@ -3,6 +3,8 @@ Snake game
 
 Open up `public/index.html` in Chrome browser and the game should work. However, if it doesn't work, the below is the steps to build.
 
+Or, play it <a href="http://example.com/" target="_blank" title="Snake Game">here</a>
+
 # How to build (if you need to build)
 ###Pre-requisites
 * Node.js (LTS)
@@ -21,4 +23,3 @@ Todos
 3. Decorate snake with css by adding head and tail class name to the cells.
 2. Add start page to customize game, such as snake speed, number of frogs, size of the board.
 3. Fix bugs (e.g. key control).
-# snake-game
