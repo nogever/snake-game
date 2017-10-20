@@ -1,1 +1,3 @@
 node_modules/
+*.php
+.DS_Store
